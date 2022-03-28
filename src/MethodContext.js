@@ -1,3 +1,4 @@
+import { reverse } from 'dns';
 import { EventEmitter } from './EventEmitter';
 
 /*
@@ -7,9 +8,16 @@ import { EventEmitter } from './EventEmitter';
 В качестве callback нужно передавать тот же самый обработчик, который был передан при подписке.
  */
 export const obj = {
-    count: 0,
-    subscribe() {},
-    unsubscribe() {},
+	count: 0,
+	counter() {
+		obj.count++
+	},
+	subscribe() {
+		EventEmitter.on('click', this.counter)
+	},
+	unsubscribe() {
+		EventEmitter.off('click', this.counter)
+	},
 };
 
 /*
@@ -19,8 +27,12 @@ obj1.first(1, 2, 3);
 // Внутренний вызов должен быть равносилен obj1.second(3, 2, 1)
  */
 export const obj1 = {
-    first(...args) {},
-    second() {
-        // здесь ничего писать не нужно
-    },
-};
+	first(...args) {
+		this.second.call(this, ...args.reverse())
+	},
+	second() {
+		// здесь ничего писать не нужно
+	},
+
+}
+
